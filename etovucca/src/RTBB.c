@@ -26,6 +26,7 @@ const char * USAGE = "Usage:\n\
 
 bool isEligible(_id_t election, _id_t office, _id_t voter);
 bool is18AtDeadline(Date dob, Date deadline);
+char* htmlSantization(char* input);
 int compareDates(Date a, Date b);
 
 bool parseDate(const char * const date_in, Date *date_out) {
@@ -93,7 +94,8 @@ int main(int argc, char **argv) {
          return ERROR;
       }
       strncpy(name, argv[3], MAX_NAME_LEN-1);
-      printf("%d\n", storeOffice(db, election, name));
+      char* clean_name = htmlSantization(name);
+      printf("%d\n", storeOffice(db, election, clean_name));
       return 0;
    } else if (!strncmp("add-candidate", argv[1], MAX_NAME_LEN)) {
       if (argc < 4) {
@@ -107,7 +109,9 @@ int main(int argc, char **argv) {
          return ERROR;
       }
       strncpy(name, argv[3], MAX_NAME_LEN-1);
-      printf("%d\n", storeCandidate(db, office, name));
+      char* clean_name = htmlSantization(name);
+      printf("%d\n", storeCandidate(db, office, clean_name));
+      free(clean_name);
    } else if (!strncmp("add-zip", argv[1], MAX_NAME_LEN)) {
       if (argc < 4) {
          printf("%s", USAGE);
@@ -136,6 +140,9 @@ int main(int argc, char **argv) {
       Date dob;
       strncpy(name, argv[2], MAX_NAME_LEN-1);
       strncpy(county, argv[3], MAX_NAME_LEN-1);
+
+      char* clean_name = htmlSantization(name);
+      clean_name = htmlSantization(name);
       if (sscanf(argv[4], "%d", &zip) != 1) {
          printf("%s", USAGE);
          return ERROR;
@@ -144,7 +151,8 @@ int main(int argc, char **argv) {
          printf("%s", USAGE);
          return ERROR;
       }
-      printf("%d\n", storeVoter(db, name, county, zip, dob));
+      printf("%d\n", storeVoter(db, clean_name, county, zip, dob));
+      free(clean_name);
       return 0;
    } else if (!strncmp("open-election", argv[1], MAX_NAME_LEN)) {
       if (argc < 3) {
@@ -232,6 +240,8 @@ int main(int argc, char **argv) {
       return 0;
    } else {
       printf("%s", USAGE);
+      printf("Requested: ");
+      printf(argv[1]);
       return ERROR;
    }
    return 0;
@@ -307,4 +317,61 @@ bool is18AtDeadline(Date dob, Date deadline) {
       age -= 1; /* then this year doesn't count yet */
    }
    return age >= 18;
+}
+
+/**
+ * Basic XSS defense - re-encodes <, > &, ', "
+ * Guidance taken from:
+ * https://www.php.net/manual/en/function.htmlspecialchars.php
+ * 
+ * Don't forget to free the strings
+ */
+char * htmlSantization(char* input) {
+   int req_length = len(input) + 1;
+   for (int i = 0; i < len(input) ; i++) {
+      char c = input[i];
+      if (c == '<' || c == '>') {
+         req_length += 2;
+      } else if (c == '&') {
+         req_length += 3;
+      } else if (c == '\'' || c == '"') {
+         req_length += 4;
+      }
+   }
+
+   char* output = malloc(sizeof(char) * req_length);
+   int j = 0;
+   for (int i = 0; i < len(input); i++) {
+      char c = input[i];
+      if (c == '<') {
+         output[j++] = '&';
+         output[j++] = 'l';
+         output[j++] = 't';
+      } else if (c == '>') {
+         output[j++] = '&';
+         output[j++] = 'r';
+         output[j++] = 't';
+      } else if (c == '&') {
+         output[j++] = '&';
+         output[j++] = 'a';
+         output[j++] = 'm';
+         output[j++] = 'p';
+      } else if (c == '\'') {
+         output[j++] = '&';
+         output[j++] = '#';
+         output[j++] = '0';
+         output[j++] = '3';
+         output[j++] = '9';
+      } else if (c == '"') {
+         output[j++] = '&';
+         output[j++] = 'q';
+         output[j++] = 'u';
+         output[j++] = 'o';
+         output[j++] = 't';
+      } else {
+         output[j++] = c;
+      }
+   }
+
+   return output;
 }
