@@ -241,7 +241,7 @@ int main(int argc, char **argv) {
    } else {
       printf("%s", USAGE);
       printf("Requested: ");
-      printf(argv[1]);
+      printf(argv[1], 0);
       return ERROR;
    }
    return 0;
@@ -327,8 +327,8 @@ bool is18AtDeadline(Date dob, Date deadline) {
  * Don't forget to free the strings
  */
 char * htmlSantization(char* input) {
-   int req_length = len(input) + 1;
-   for (int i = 0; i < len(input) ; i++) {
+   int req_length = strlen(input) + 1;
+   for (int i = 0; i < strlen(input) ; i++) {
       char c = input[i];
       if (c == '<' || c == '>') {
          req_length += 2;
@@ -341,7 +341,7 @@ char * htmlSantization(char* input) {
 
    char* output = malloc(sizeof(char) * req_length);
    int j = 0;
-   for (int i = 0; i < len(input); i++) {
+   for (int i = 0; i < strlen(input); i++) {
       char c = input[i];
       if (c == '<') {
          output[j++] = '&';
