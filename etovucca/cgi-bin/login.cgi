@@ -3,16 +3,17 @@
 import cgi
 from http.cookies import SimpleCookie
 import hashlib
+import sqlite3
 
 #PATH_TO_PASSWD = "./machine_passwd"
 PATH_TO_PASSWD = "./admin.sqlite3"
 redirectURL = "./admin.cgi"
 
 def get_stored_hash(password_input):
-    db = sqlite.connect(PATH_TO_PASSWD)
+    db = sqlite3.connect(PATH_TO_PASSWD)
     cursor = db.cursor()
     
-    query = "SELECT password_hash FROM admin_passwords WHERE password = '" + password_input + "'"
+    query = "SELECT password_hash FROM admin_passwords WHERE password='" + password_input + "'"
     cursor.execute(query)
     result = cursor.fetchone()
 
