@@ -5,7 +5,7 @@ from http.cookies import SimpleCookie
 import hashlib
 
 #PATH_TO_PASSWD = "./machine_passwd"
-PATH_TO_PASSWD = "./admin.db"
+PATH_TO_PASSWD = "./admin.sqlite3"
 redirectURL = "./admin.cgi"
 
 def get_stored_hash(password_input):
