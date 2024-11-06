@@ -18,7 +18,7 @@ def get_stored_hash(password_input):
     result = cursor.fetchone()
 
     db.close()
-    return result[0] if result else None
+    return result[0]
 
 
 def render_login(failure=False, logout=False):
