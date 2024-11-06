@@ -4,8 +4,21 @@ import cgi
 from http.cookies import SimpleCookie
 import hashlib
 
-PATH_TO_PASSWD = "./machine_passwd"
+#PATH_TO_PASSWD = "./machine_passwd"
+PATH_TO_PASSWD = "./admin.db"
 redirectURL = "./admin.cgi"
+
+def get_stored_hash(password_input):
+    db = sqlite.connect(PATH_TO_PASSWD)
+    cursor = db.cursor()
+    
+    query = "SELECT password_hash FROM admin_passwords WHERE password = '" + password_input + "'"
+    cursor.execute(query)
+    result = cursor.fetchone()
+
+    db.close()
+    return result[0] if result else None
+
 
 def render_login(failure=False, logout=False):
     print("Content-Type: text/html")
@@ -28,12 +41,17 @@ form = cgi.FieldStorage()
 
 try:
     if 'passwd' in form:
+
+        password_input = form.getvalue('passwd')
+
+        stored_password_hash = get_stored_hash(password_input)
+
         # Please don't ever actually do this.
         h = hashlib.new('md5')  # U+1F914
         h.update(form.getvalue('passwd').encode('utf-8'))
         with open(PATH_TO_PASSWD) as f:
             stored_hash = f.read(32)
-            if h.hexdigest() == stored_hash:
+            if stored_password_hash == stored_hash:
                 # CGI Redirect: https://stackoverflow.com/a/6123179
                 print('Content-Type: text/html')
                 print('Location: %s' % redirectURL)

@@ -6,7 +6,7 @@ SRCDIR=src
 LIBDIR=lib
 DEPS=Database.o libsqlite3.so
 
-.PHONY: all clean initdb cgi
+.PHONY: all clean initdb cgi init-admin-db
 
 all: $(TARGET)
 
@@ -24,7 +24,10 @@ libsqlite3.so: $(LIBDIR)/sqlite3.c
 		$(CC) -o sqlite3 $^ $(LIBDIR)/shell.c -ldl -pthread
 
 clean:
-		$(RM) $(TARGET) $(DEPS) sqlite3 *.o
+		$(RM) $(TARGET) $(DEPS) sqlite3 *.o admin.sqlite3
 
-initdb:
+initdb: init-admin-db
 		echo .quit | ./sqlite3 -init setup.sql rtbb.sqlite3
+
+init-admin-db:
+		echo .quit | ./sqlite3 -init admin_setup.sql admin.sqlite3
