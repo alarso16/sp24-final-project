@@ -57,7 +57,7 @@ try:
                 print('Content-Type: text/html')
                 print('Location: %s' % redirectURL)
                 C = SimpleCookie()
-                C['user'] = h.hexdigest() # U+1F914
+                C['user'] = stored_password_hash # U+1F914
                 print(C)
                 print('')
                 print('<html>')
