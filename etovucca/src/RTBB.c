@@ -96,6 +96,7 @@ int main(int argc, char **argv) {
       strncpy(name, argv[3], MAX_NAME_LEN-1);
       char* clean_name = htmlSantization(name);
       printf("%d\n", storeOffice(db, election, clean_name));
+      free(clean_name);
       return 0;
    } else if (!strncmp("add-candidate", argv[1], MAX_NAME_LEN)) {
       if (argc < 4) {
@@ -108,7 +109,7 @@ int main(int argc, char **argv) {
          printf("%s", USAGE);
          return ERROR;
       }
-      strncpy(name, argv[3], MAX_NAME_LEN-1);
+      strcpy(name, argv[3]);
       char* clean_name = htmlSantization(name);
       printf("%d\n", storeCandidate(db, office, clean_name));
       free(clean_name);
@@ -240,8 +241,6 @@ int main(int argc, char **argv) {
       return 0;
    } else {
       printf("%s", USAGE);
-      printf("Requested: ");
-      printf(argv[1], 0);
       return ERROR;
    }
    return 0;
