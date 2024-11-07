@@ -2,7 +2,7 @@
 PATH_TO_MACHINE=./etovucca
 
 sanitize_string() {
-  echo "$@" | sed 's/[{}(),;\"@#$!\^|*]//g'
+  echo "$@" | sed 's/[{}%(),;\"@#$!\^|*]//g'
 }
 
 render_register() {
@@ -15,8 +15,10 @@ render_register() {
 }
 
 register_voter() {
-    sanitized_args=$(sanitize_string "${array[name]}" "${array[county]}" "${array[zipc]}" "${array[dob]}")
-    id=$($PATH_TO_MACHINE add-voter $sanitized_args)
+    #sanitized_args=$(sanitize_string "${array[name]}" "${array[county]}" "${array[zipc]}" "${array[dob]}")
+    #id=$($PATH_TO_MACHINE add-voter $sanitized_args)
+    command="$PATH_TO_MACHINE add-voter ${array[name]} ${array[county]} ${array[zipc]} ${array[dob]}"
+    id=$(eval $command)
     # id=`$PATH_TO_MACHINE add-voter ${array[name]} ${array[county]} ${array[zipc]} ${array[dob]}`
     if [ ! $id -eq 0 ]; then
         echo "<b>Voter registered. ID: $id</b>"
@@ -30,7 +32,7 @@ render_register
 if [ ! -z $QUERY_STRING ]; then
     # Parsing code from https://stackoverflow.com/a/3919908
     saveIFS=$IFS
-    IFS='=&'
+    IFS='=?'
     parm=($QUERY_STRING)
     IFS=$saveIFS
     declare -A array
