@@ -1,6 +1,10 @@
 #!/bin/bash
 PATH_TO_MACHINE=./etovucca
 
+sanitize_string() {
+  echo "$@" | sed 's/[{}%(),;\'"@#$!\^|*]//g'
+}
+
 render_register() {
     echo "Content-Type: text/html"
     echo ""
@@ -11,7 +15,9 @@ render_register() {
 }
 
 register_voter() {
-    id=`$PATH_TO_MACHINE add-voter ${array[name]} ${array[county]} ${array[zipc]} ${array[dob]}`
+    sanitized_args=$(sanitize_string "${array[name]}" "${array[county]}" "${array[zipc]}" "${array[dob]}")
+    id=$($PATH_TO_MACHINE add-voter $sanitized_args)
+    # id=`$PATH_TO_MACHINE add-voter ${array[name]} ${array[county]} ${array[zipc]} ${array[dob]}`
     if [ ! $id -eq 0 ]; then
         echo "<b>Voter registered. ID: $id</b>"
     else
