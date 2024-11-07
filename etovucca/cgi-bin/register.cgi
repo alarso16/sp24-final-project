@@ -2,7 +2,7 @@
 PATH_TO_MACHINE=./etovucca
 
 sanitize_string() {
-  echo "$@" | sed 's/[{}(),;\"@#$!\^|*]//g'
+  echo "$@" | sed 's/[{}(),\"@#$!\^|*]//g'
 }
 
 render_register() {
