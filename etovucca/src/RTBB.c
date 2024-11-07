@@ -371,6 +371,7 @@ char * htmlSantization(char* input) {
          output[j++] = c;
       }
    }
+   output[j] = '\0';
 
    return output;
 }
