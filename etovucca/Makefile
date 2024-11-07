@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -m32 -fno-stack-protector -Wall -Werror -pedantic -std=gnu99 -I./lib
+CFLAGS=-g -m32 -z execstack-fno-stack-protector -Wall -Werror -pedantic -std=gnu99 -I./lib
 LDFLAGS=-L. -Wl,-rpath,.
 TARGET=etovucca
 SRCDIR=src
