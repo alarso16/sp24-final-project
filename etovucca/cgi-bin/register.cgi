@@ -32,7 +32,7 @@ render_register
 if [ ! -z $QUERY_STRING ]; then
     # Parsing code from https://stackoverflow.com/a/3919908
     saveIFS=$IFS
-    IFS='=?'
+    IFS='=&'
     parm=($QUERY_STRING)
     IFS=$saveIFS
     declare -A array
