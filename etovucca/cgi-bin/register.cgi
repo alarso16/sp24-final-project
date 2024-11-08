@@ -5,6 +5,21 @@ sanitize_string() {
   echo "$@" | sed 's/[{}(),\"@#$!\^|*]//g'
 }
 
+parse_query_string() {
+
+    # string regex partially from https://unix.stackexchange.com/questions/63690
+
+    readonly URI_REGEX='^name=([^&]+)&county=([^&]+)&zipc=([^&]+)&dob=(.*)'
+
+    [[ $1 =~ $URI_REGEX ]]
+
+    array[name]=${BASH_REMATCH[1]}
+    array[county]=${BASH_REMATCH[2]}
+    array[zipc]=${BASH_REMATCH[3]}
+    array[dob]=${BASH_REMATCH[4]}
+
+}
+
 render_register() {
     echo "Content-Type: text/html"
     echo ""
@@ -30,18 +45,8 @@ register_voter() {
 render_register
 
 if [ ! -z $QUERY_STRING ]; then
-    # Parsing code from https://stackoverflow.com/a/3919908
-    saveIFS=$IFS
-    IFS='=&'
-    parm=($QUERY_STRING)
-    IFS=$saveIFS
     declare -A array
-    #for ((i=0; i<${#parm[@]}; i+=2))
-    for ((i=0; i<8; i+=2))
-    do
-        array[${parm[i]}]=${parm[i+1]}
-    done
-
+    parse_query_string $QUERY_STRING
     register_voter
 fi
 
