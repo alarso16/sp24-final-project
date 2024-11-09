@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
          printf("%s", USAGE);
          return ERROR;
       }
-      strcpy(name, argv[3]);
+      strncpy(name, argv[3], MAX_NAME_LEN - 1);
       char* clean_name = htmlSantization(name);
       printf("%d\n", storeCandidate(db, office, clean_name));
       free(clean_name);

@@ -26,7 +26,7 @@ def render_elections(elections, status):
         if elections[date]['status'] == status:
             eid = convert_date_to_id(date)
             if status == 'open':
-                elections_category.append('<li>Election ID {}: {} <a href="admin.cgi?action=closed&id={}">Close</a>'.format(eid, date, eid))
+                elections_category.append('<li>Election ID {}: {} <a id="election{}" href="admin.cgi?action=closed&id={}">Close</a>'.format(eid, date, eid, eid))
             elif status == 'closed':
                 elections_category.append('<li>Election ID {}: {} <a href="admin.cgi?action=open&id={}">Open</a> <a href="admin.cgi?action=published&id={}">Publish</a>'.format(eid, date, eid, eid))
             else:
@@ -46,7 +46,7 @@ def render_elections(elections, status):
                 for cid in range(0, len(office['candidates'])):
                     candidate = office['candidates'][cid]
                     if status == 'published':
-                        elections_category.append('<li>Candidate ID {}: {} ({} votes)'.format(candidate['id'], candidate['name'], candidate['votes']))
+                        elections_category.append('<li id="c{}">Candidate ID {}: {} ({} votes)'.format(candidate['id'], candidate['id'], candidate['name'], candidate['votes']))
                     else:
                         elections_category.append('<li>Candidate ID {}: {}'.format(candidate['id'], candidate['name']))
                 elections_category.append('</ul>')
