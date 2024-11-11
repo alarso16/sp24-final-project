@@ -30,11 +30,8 @@ render_register() {
 }
 
 register_voter() {
-    #sanitized_args=$(sanitize_string "${array[name]}" "${array[county]}" "${array[zipc]}" "${array[dob]}")
-    #id=$($PATH_TO_MACHINE add-voter $sanitized_args)
     command="$PATH_TO_MACHINE add-voter ${array[name]} ${array[county]} ${array[zipc]} ${array[dob]}"
     id=$(eval $command)
-    # id=`$PATH_TO_MACHINE add-voter ${array[name]} ${array[county]} ${array[zipc]} ${array[dob]}`
     if [ ! $id -eq 0 ]; then
         echo "<b>Voter registered. ID: $id</b>"
     else
